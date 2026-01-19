@@ -2,73 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Create Account – 444Music</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="register.css">
-  <!-- Paste the CSS I gave you inside this style tag or link it as a file -->
+  <title>Login | .444Music</title>
+  <link rel="stylesheet" href="login.css">
   <style>
-    /* Paste the full CSS I sent you here */
+   
   </style>
 </head>
 <body>
 
-  <div class="auth-wrapper">
-    <div class="auth-card">
-      <h1>Welcome Back to 444Music</h1>
-      <p>Create your artist account and start distributing worldwide</p>
+  <div class="wrapper">
+    <h1>Login</h1>
+    <div class="subtitle">Access your artist dashboard</div>
 
-      <form id="registerForm">
-
-        <div class="field">
-          <input type="email" id="email" placeholder="Email Address" required>
-        </div>
-
-        <div class="field">
-          <input type="password" id="password" placeholder="Password" required>
-        </div>
-
-        <button type="submit" class="auth-btn">Login</button>
-      </form>
-
-      <div class="auth-links">
-        Don't have an account?
-        <a href="register.html">Sign Up</a>
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
       </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+      </div>
+      <button type="submit" class="btn">Login</button>
+      <div class="error-msg" id="errorMsg"></div>
+    </form>
+
+    <div class="link">
+      Don't have an account? <a href="register.html">Register</a>
     </div>
   </div>
+
+  <!-- Firebase JS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+      authDomain: "usersubmissionsportal.firebaseapp.com",
+      projectId: "usersubmissionsportal",
+      storageBucket: "usersubmissionsportal.firebasestorage.app",
+      messagingSenderId: "734783502459",
+      appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginForm = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.textContent = "";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // Redirect to dashboard after successful login
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        console.error("Login failed:", err);
+        errorMsg.textContent = "Invalid email or password.";
+      }
+    });
+  </script>
 
 </body>
 </html>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-    authDomain: "usersubmissionsportal.firebaseapp.com",
-    projectId: "usersubmissionsportal",
-    storageBucket: "usersubmissionsportal.firebasestorage.app",
-    messagingSenderId: "734783502459",
-    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  const form = document.getElementById("loginForm");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "home.html";
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-</script>
