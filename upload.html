@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Release Upload</title>
+<link rel="stylesheet" href="upload.css">
+<style>
+
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <h1>Release Details</h1>
+
+  <form id="releaseForm">
+    <div class="field">
+      <label>Release Title</label>
+      <input id="title" required>
+    </div>
+
+    <div class="field">
+      <label>Artist Name</label>
+      <input id="artist" required>
+    </div>
+
+    <div class="field">
+      <label>Release Type</label>
+      <select id="type" required>
+        <option value="">Select</option>
+        <option value="Single">Single</option>
+        <option value="EP">EP</option>
+        <option value="Album">Album</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Cover Art (JPG/PNG)</label>
+      <input type="file" id="cover" accept="image/*" required>
+    </div>
+
+    <button type="submit">Submit Release</button>
+    <div id="status"></div>
+  </form>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "login.html";
+  currentUser = user;
+});
+
+const form = document.getElementById("releaseForm");
+const status = document.getElementById("status");
+
+form.onsubmit = async e => {
+  e.preventDefault();
+  status.textContent = "Uploading cover art...";
+
+  try {
+    const file = document.getElementById("cover").files[0];
+    const path = ref(storage, `covers/${currentUser.uid}/${Date.now()}_${file.name}`);
+    await uploadBytes(path, file);
+    const coverURL = await getDownloadURL(path);
+
+    status.textContent = "Saving release...";
+
+    await addDoc(collection(db, "submissions"), {
+      userId: currentUser.uid,
+      title: title.value,
+      artist: artist.value,
+      type: type.value,
+      cover: coverURL,
+      status: "Pending",
+      createdAt: Date.now()
+    });
+
+    location.href = "dashboard.html";
+  } catch (err) {
+    status.textContent = err.message;
+  }
+};
+</script>
+</body>
+</html>
