@@ -7,11 +7,55 @@
 <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
+  <div class="navbar">
+  <div class="brand">444Music</div>
+
+  <div class="menu">
+    <button id="menuBtn">☰</button>
+    <ul id="menuList">
+      <li onclick="location.href='submit.html'">Create New Release</li>
+      <li onclick="location.href='earnings.html'">Earnings</li>
+      <li id="logoutBtn">Logout</li>
+    </ul>
+  </div>
+</div>
+<div class="notice">
+
+ <div class="notice">
+  <div class="notice-content">
+    <p>
+      <strong>NB:</strong> All submitted releases will remain in
+      <span class="pending-text">Pending</span> status until payment is made.
+      Your music will only be reviewed and distributed after payment is confirmed.
+    </p>
+
+    <a class="pay-btn" href="https://wa.me/+233530399523" target="_blank">
+      PAY NOW
+    </a>
+  </div>
+</div>
+
+
+  <a class="pay-btn" href="https://wa.me/+233530399523" target="_blank">
+    PAY NOW
+  </a>
+</div>
+
 <div class="header">
   <h1>My Releases</h1>
 </div>
 <div class="container" id="submissionsContainer">
 </div>
+
+<script>
+const menuBtn = document.getElementById("menuBtn");
+const menuList = document.getElementById("menuList");
+
+menuBtn.onclick = () => {
+  menuList.style.display =
+    menuList.style.display === "block" ? "none" : "block";
+};
+</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -46,6 +90,7 @@ onAuthStateChanged(auth, async (user)=>{
       container.innerHTML='<div class="empty">No submissions yet</div>';
       return;
     }
+    
 
     snapshot.forEach(docSnap=>{
       const data=docSnap.data();

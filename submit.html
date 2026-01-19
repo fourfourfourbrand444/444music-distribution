@@ -3,76 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Submit Your Release</title>
+<title>Create New Release</title>
 <link rel="stylesheet" href="submit.css">
+<style>
+
+</style>
 </head>
+
 <body>
 <div class="wrapper">
-  <h1>Submit Your Release</h1>
-  <p class="subtitle">Fill all the details below. After submitting, you will upload your cover & audio on the next page.</p>
+  <h1>Create New Release</h1>
+  <p class="subtitle">Enter your release details. Upload files on the next step.</p>
+
   <form id="releaseForm">
     <div class="grid">
       <div class="field">
-        <label>Release Title *</label>
-        <input id="releaseTitle" type="text" required>
+        <label>Artist Name</label>
+        <input id="artistName" required>
       </div>
+
       <div class="field">
-        <label>Main Artist *</label>
-        <input id="mainArtist" type="text" required>
+        <label>Release Title</label>
+        <input id="releaseTitle" required>
       </div>
+
       <div class="field">
-        <label>Featuring Artist(s)</label>
-        <input id="featuring" type="text" placeholder="Optional">
-      </div>
-      <div class="field">
-        <label>Release Type *</label>
-        <select id="releaseType" required>
-          <option value="Single">Single</option>
-          <option value="EP">EP</option>
-          <option value="Album">Album</option>
+        <label>Release Type</label>
+        <select id="releaseType">
+          <option>Single</option>
+          <option>EP</option>
+          <option>Album</option>
         </select>
       </div>
+
       <div class="field">
-        <label>Genre *</label>
-        <input id="genre" type="text" required>
+        <label>Main Artist</label>
+        <input id="mainArtist">
       </div>
+
       <div class="field">
-        <label>Language *</label>
-        <input id="language" type="text" required>
+        <label>Featuring Artist</label>
+        <input id="featuring">
       </div>
+
       <div class="field">
-        <label>Release Date *</label>
-        <input id="releaseDate" type="date" required>
+        <label>Genre</label>
+        <input id="genre">
       </div>
+
       <div class="field">
-        <label>Copyright Holder *</label>
-        <input id="copyright" type="text" required>
+        <label>Language</label>
+        <input id="language">
       </div>
+
       <div class="field">
-        <label>Label</label>
-        <input id="label" type="text" placeholder="Optional">
+        <label>Release Date</label>
+        <input id="releaseDate" type="date">
       </div>
+
       <div class="field">
-        <label>Explicit *</label>
-        <select id="explicit" required>
-          <option value="No">No</option>
-          <option value="Yes">Yes</option>
+        <label>Copyright Holder</label>
+        <input id="copyright">
+      </div>
+
+      <div class="field">
+        <label>Label Name</label>
+        <input id="label">
+      </div>
+
+      <div class="field">
+        <label>Explicit Content</label>
+        <select id="explicit">
+          <option>No</option>
+          <option>Yes</option>
         </select>
       </div>
-      <div class="field" style="grid-column:1/-1;">
-        <label>Description</label>
-        <textarea id="description" placeholder="Optional"></textarea>
+
+      <div class="field">
+        <label>Cover Art URL (from Tally)</label>
+        <input id="coverURL" placeholder="https://tally.so/file/...">
       </div>
     </div>
-    <button class="btn" type="submit">Proceed to Upload</button>
+
+    <div class="field" style="margin-top:16px;">
+      <label>Add Lyrics (Optional)</label>
+      <textarea id="description"></textarea>
+    </div>
+
+    <button class="btn" type="submit">Save & Upload Files</button>
+    <div id="statusMsg"></div>
   </form>
-  <div id="statusMsg"></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -84,14 +110,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
-
-const form = document.getElementById("releaseForm");
-const statusMsg = document.getElementById("statusMsg");
+const db = getFirestore(app);
 
 let currentUser = null;
-
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -100,15 +122,17 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+const form = document.getElementById("releaseForm");
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (!currentUser) return;
 
-  statusMsg.textContent = "Saving release info...";
+  if (!currentUser) return alert("You must be logged in.");
 
   try {
     const data = {
-      title: document.getElementById("releaseTitle").value.trim(),
+      artistName: document.getElementById("artistName").value.trim(),
+      releaseTitle: document.getElementById("releaseTitle").value.trim(),
       mainArtist: document.getElementById("mainArtist").value.trim(),
       featuring: document.getElementById("featuring").value.trim(),
       releaseType: document.getElementById("releaseType").value,
@@ -121,21 +145,19 @@ form.addEventListener("submit", async (e) => {
       description: document.getElementById("description").value.trim(),
       userId: currentUser.uid,
       status: "Pending",
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      coverURL: ""  // will be updated after Tally submission
     };
 
-    await addDoc(collection(db, "submissions"), {
-    coverURL: "" // <-- Add this field
-});
+    // Save text fields to Firestore
+    await addDoc(collection(db, "submissions"), data);
 
-    // Redirect to Tally file upload form
+    // Redirect user to Tally form to upload files
     window.location.href = "https://tally.so/r/NpX0pp";
 
   } catch (err) {
-    console.error("Failed to save release:", err);
-    statusMsg.textContent = "Error: " + err.message;
+    console.error("Failed to submit:", err);
+    alert("Failed to submit release. Check console for details.");
   }
 });
 </script>
-</body>
-</html>

@@ -4,7 +4,128 @@ body {
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
   color: #fff;
   padding: 20px;
+
 }
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notice {
+  max-width: 1200px;
+  margin: 20px auto 30px;
+  padding: 1px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #1DB954, #00e0ff);
+}
+
+.notice-content {
+  background: rgba(15, 15, 25, 0.95);
+  border-radius: 15px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.notice-content p {
+  color: #ddd;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 760px;
+}
+
+.notice-content strong {
+  color: #fff;
+}
+
+.pending-text {
+  color: #ffb347;
+  font-weight: 600;
+}
+
+.pay-btn {
+  padding: 12px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.4px;
+  background: linear-gradient(90deg, #1DB954, #00e0ff);
+  color: #000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.pay-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 224, 255, 0.35);
+  opacity: 0.95;
+}
+
+@media (max-width: 700px) {
+  .notice-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pay-btn {
+    align-self: stretch;
+    text-align: center;
+  }
+}
+
+
+.brand {
+  font-size: 1.8rem;
+  background: linear-gradient(90deg, #1DB954, #00e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu {
+  position: relative;
+}
+
+.menu button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.menu ul {
+  position: absolute;
+  right: 0;
+  top: 42px;
+  background: #0f1220;
+  border: 1px solid #2a2f55;
+  border-radius: 12px;
+  list-style: none;
+  padding: 8px;
+  display: none;
+  width: 200px;
+  z-index: 99;
+}
+
+.menu ul li {
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.menu ul li:hover {
+  background: #1a1d33;
+  color: #1DB954;
+}
+
 .header {
   max-width: 1200px;
   margin: 0 auto 25px;

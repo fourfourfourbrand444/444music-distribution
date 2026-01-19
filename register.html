@@ -1,51 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register | Artist Portal</title>
-<link rel="stylesheet" href="register.css">
-<style>
-  
-</style>
+  <meta charset="UTF-8">
+  <title>Create Account – 444Music</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="register.css">
+  <!-- Paste the CSS I gave you inside this style tag or link it as a file -->
+  <style>
+    /* Paste the full CSS I sent you here */
+  </style>
 </head>
 <body>
-<div class="container">
-  <h2>Create Account</h2>
-  <input id="email" type="email" placeholder="Email"><br>
-  <input id="password" type="password" placeholder="Password"><br>
-  <button onclick="register()">Register</button>
-  <p>Already have an account? <a href="login.html">Login</a></p>
-</div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <h1>Join 444Music</h1>
+      <p>Create your artist account and start distributing worldwide</p>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
-  measurementId: "G-WCRN117P8P"
-};
+      <form id="registerForm">
+        <div class="field">
+          <input type="text" id="name" placeholder="Artist / Full Name" required>
+        </div>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+        <div class="field">
+          <input type="email" id="email" placeholder="Email Address" required>
+        </div>
 
-window.register = async () => {
-  try {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("Account created!");
-    window.location = "explore.html";
-  } catch(e) {
-    alert(e.message);
-  }
-}
-</script>
+        <div class="field">
+          <input type="password" id="password" placeholder="Password" required>
+        </div>
+
+        <div class="field">
+          <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        </div>
+
+        <button type="submit" class="auth-btn">Create Account</button>
+      </form>
+
+      <div class="auth-links">
+        Already have an account?
+        <a href="login.html">Sign in</a>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const form = document.getElementById("registerForm");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirm = document.getElementById("confirmPassword").value.trim();
+
+    if (password !== confirm) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      window.location.href = "exp 2.html";
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+</script>
