@@ -18,7 +18,7 @@ body {
 
 .auth-wrapper {
   width: 100%;
-  max-width: 420px;
+  max-width: 340px;
   padding: 2px;
   border-radius: 20px;
   background: linear-gradient(135deg, #1DB954, #00e0ff, #7f5cff);
