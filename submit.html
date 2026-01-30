@@ -34,8 +34,8 @@
       </div>
 
       <div class="field">
-        <label>Main Artist</label>
-        <input id="mainArtist">
+        <label>Phone Number</label>
+        <input id="number" required>
       </div>
 
       <div class="field">
@@ -69,6 +69,11 @@
       </div>
 
       <div class="field">
+         <label>Email</label>
+         <input  id="email" required>
+      </div>
+  
+      <div class="field">
         <label>Explicit Content</label>
         <select id="explicit">
           <option>No</option>
@@ -86,17 +91,23 @@
     <div id="statusMsg"></div>
   </form>
 </div>
+<!-- EMAILJS -->
+<!-- EmailJS (NOT module) -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("mwAZ_hDxmnBqkrTfA"); // your PUBLIC KEY
+</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  doc, 
-  getDoc, 
-  setDoc 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -114,7 +125,7 @@ const db = getFirestore(app);
 
 let currentUser = null;
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, user => {
   if (!user) {
     window.location.href = "login.html";
   } else {
@@ -132,49 +143,58 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  const data = {
+    artistName: document.getElementById("artistName").value.trim(),
+    releaseTitle: document.getElementById("releaseTitle").value.trim(),
+    releaseType: document.getElementById("releaseType").value,
+    genre: document.getElementById("genre").value.trim(),
+    language: document.getElementById("language").value.trim(),
+    releaseDate: document.getElementById("releaseDate").value,
+    explicit: document.getElementById("explicit").value,
+    email: document.getElementById("email").value.trim(),
+    userId: currentUser.uid,
+    status: "Pending",
+    createdAt: Date.now(),
+    coverURL: ""
+  };
+
   try {
-    // 🔥 ENSURE USER EARNINGS DOC EXISTS
+    // Ensure user doc exists
     const userRef = doc(db, "users", currentUser.uid);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
       await setDoc(userRef, {
         earnings: 0,
+        email: currentUser.email,
         createdAt: Date.now()
       });
     }
 
     // Save submission
-    const data = {
-      artistName: document.getElementById("artistName").value.trim(),
-      releaseTitle: document.getElementById("releaseTitle").value.trim(),
-      mainArtist: document.getElementById("mainArtist").value.trim(),
-      featuring: document.getElementById("featuring").value.trim(),
-      releaseType: document.getElementById("releaseType").value,
-      genre: document.getElementById("genre").value.trim(),
-      language: document.getElementById("language").value.trim(),
-      releaseDate: document.getElementById("releaseDate").value,
-      copyright: document.getElementById("copyright").value.trim(),
-      label: document.getElementById("label").value.trim(),
-      explicit: document.getElementById("explicit").value,
-      description: document.getElementById("description").value.trim(),
-      userId: currentUser.uid,
-      status: "Pending",
-      createdAt: Date.now(),
-      coverURL: ""
-    };
-
     await addDoc(collection(db, "submissions"), data);
 
-    // Redirect to Tally upload form
-    window.location.href = "https://tally.so/r/NpX0pp";
+    // SEND EMAIL (EVERY SUBMISSION)
+    emailjs.send("service_ydy0muo", "template_i6qh7ew", {
+      artist_name: data.artistName,
+      release_title: data.releaseTitle,
+      release_type: data.releaseType,
+      genre: data.genre,
+      language: data.language,
+      release_date: data.releaseDate,
+      explicit: data.explicit,
+      user_email: data.email,
+      user_id: currentUser.uid,
+      created_at: new Date().toLocaleString()
+    })
+    .then(() => console.log("✅ EMAIL SENT"))
+    .catch(err => console.error("❌ EMAIL FAILED", err));
+
+    window.location.href = "select.html";
 
   } catch (err) {
-    console.error("Failed to submit:", err);
-    alert("Failed to submit release. Please try again.");
+    console.error("Submission error:", err);
+    alert("Submission failed.");
   }
 });
 </script>
-
-</body>
-</html>

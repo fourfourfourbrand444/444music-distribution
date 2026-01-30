@@ -328,3 +328,37 @@ h2 {
     display: flex;
   }
 }
+.playlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.playlist-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,.06);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.playlist-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,.12);
+}
+
+.playlist-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.playlist-card h4 {
+  font-size: .95rem;
+  color: #0f172a;
+  font-weight: 600;
+}
